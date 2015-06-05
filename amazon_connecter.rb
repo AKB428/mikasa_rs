@@ -17,8 +17,16 @@ class AmazonConnecter
   }
 
   # タイトルのリストを受け取り 10件ずつ商品のリストを返す
+  # https://images-na.ssl-images-amazon.com/images/G/09/associates/paapi/dg/index.html?ItemSearch.html
+  # ItemSearch は、一度に最大で10個の検索結果を返します。
   def search(title)
-    res = Amazon::Ecs.item_search(title, :item_page => 1, :country => "jp")
+    # sort param
+    # https://images-na.ssl-images-amazon.com/images/G/09/associates/paapi/dg/index.html?APPNDX_SortValuesArticle.html
+    # JA SORT
+    # https://images-na.ssl-images-amazon.com/images/G/09/associates/paapi/dg/index.html?APPNDX_SortValuesArticle.html
+    # SearchIndex: DVD
+    # salesrank
+    res = Amazon::Ecs.item_search(title, :item_page => 1, :country => "jp", :sort => 'salesrank', :search_index => 'DVD')
     # 返ってきたXMLを表示（res.doc.to_sでも多分OK）
 
     res.items.each do |item|
@@ -28,12 +36,16 @@ class AmazonConnecter
     end
   end
 
-  title_list = ['ラブライブ', 'ニセコイ']
+
+  # Kafkaから受信するタイトルリストは４つの想定
+  # API 4 CALL
+  title_list = ['ラブライブ', 'ニセコイ', '俺ガイル', 'アルスラーン戦記']
   title_list.each do |title|
     puts title
     AmazonConnecter.new.search(title)
   end
 
-  // http://www.amazon.co.jp/dp/4839947591/?tag=XXXXXX-22
+
+  # http://www.amazon.co.jp/dp/4839947591/?tag=XXXXXX-22
 
 end
