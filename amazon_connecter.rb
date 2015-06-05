@@ -26,13 +26,21 @@ class AmazonConnecter
     # https://images-na.ssl-images-amazon.com/images/G/09/associates/paapi/dg/index.html?APPNDX_SortValuesArticle.html
     # SearchIndex: DVD
     # salesrank
-    res = Amazon::Ecs.item_search(title, :item_page => 1, :country => "jp", :sort => 'salesrank', :search_index => 'DVD')
+    res = Amazon::Ecs.item_search(title, :item_page => 1, :country => "jp", :sort => 'salesrank', :search_index => 'DVD', :response_group => 'Medium')
     # 返ってきたXMLを表示（res.doc.to_sでも多分OK）
 
+    # レスポンス要素
+    # https://images-na.ssl-images-amazon.com/images/G/09/associates/paapi/dg/index.html?CHAP_response_elements.html
+    # http://www.ajaxtower.jp/ecs/responsegroup/index12.html
     res.items.each do |item|
       # TODO タイトル　値段　画像 商品種別(CD/DVD)
+      # http://www.ajaxtower.jp/ecs/
       puts item.get_elements("./ASIN")
       puts item.get("ItemAttributes/Title")
+      puts item.get("ItemAttributes/ListPrice/FormattedPrice")
+      puts item.get("ItemAttributes/ReleaseDate")
+      puts item.get("LargeImage/URL")
+      puts item.get("ASIN")
     end
   end
 
