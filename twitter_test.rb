@@ -10,7 +10,7 @@ class TwitterConnecter
     conf = JSON.load(file.read)
     twitter_conf = conf["Twitter"]
 
-    p twitter_conf
+#    p twitter_conf
 
     @tw = Twitter::REST::Client.new(
         :consumer_key => twitter_conf["consumer_key"],
@@ -19,6 +19,6 @@ class TwitterConnecter
         :access_token_secret => twitter_conf["access_token_secret"]
     )
     #p @tw
-    @tw.update "日本語"
+    @tw.update ARGV[0]
   end
 end
