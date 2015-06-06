@@ -59,10 +59,10 @@ end
 def save_log(date, target_min, data_string)
   #その日のファイルがなかったら作成
   # every3min_20150606.log
-  filename = 'every' + target_min + "min" + Time.now.strftime("%Y%m%d%h%M") + ".log"
+  filename = 'every' + target_min + "min" + Time.now.strftime("%Y%m%d") + ".log"
   file_path = File.join(@log_path, filename)
   #そのファイルにアペンド
-  open( file_path , 'a' ){|f| f.puts(  date.strftime("%Y%m%d%H%m") + "," + data_string)}
+  open( file_path , 'a' ){|f| f.puts(  date.strftime("%Y%m%d%H%M") + "," + data_string)}
 end
 
 
