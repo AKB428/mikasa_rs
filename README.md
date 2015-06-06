@@ -14,6 +14,14 @@
 
 ## プログラム起動
 
+
+### mikasa_view
+
+#### 概要
+
+Twitterで呟かれているトレンドタイトルをつぶやきアニメビッグデータっぽく表示する
+
+
 ``bundle exec ruby mikasa_view.rb [Kafka TOPIC] [every_minute]``
 
 every_minuteはディレクトリ名、ファイル名などの識別子に使用
@@ -25,3 +33,15 @@ every_minuteはディレクトリ名、ファイル名などの識別子に使�
 直近60分の集計を毎分受信
 
 ``bundle exec ruby mikasa_view.rb ikazuchi0 60``
+
+### mikasa
+
+#### 概要
+
+Twitterで呟かれているトレンドタイトルをアマゾンで検索しお薦め商品としてツイートするボット
+
+Crontabで１時間に１度起動する想定（1時間に40ツイート）
+
+``bundle exec ruby mikasa.rb [Kafka TOPIC]``
+
+``bundle exec ruby mikasa.rb [ikazuchi0]``

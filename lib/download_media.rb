@@ -19,7 +19,7 @@ module DownloadMedia
     if unique_directory_name.nil?
      target_path = Pathname.new(IMAGE_FOLDER_NAME).join(sub_directory_name).join(sub_sub_directory_name)
     else
-     target_path = Pathname.new(IMAGE_FOLDER_NAME).join(unique_directory_name).join(sub_directory_name).join(sub_sub_directory_name)
+     target_path = Pathname.new(unique_directory_name).join(sub_directory_name).join(sub_sub_directory_name)
     end
     #格納するディレクトリがなかったら作成する
     FileUtils.mkdir_p(target_path) unless File.exist?(target_path)
