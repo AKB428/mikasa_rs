@@ -1,8 +1,10 @@
 require 'json'
-require 'poseidon'
 
 topic = ARGV[0]
-@target_min = ARGV[1]
+target_min = ARGV[1]
+
+#テスト用
+input_data = ARGV[2]
 
 
 def build_children(title, value)
@@ -35,7 +37,7 @@ def generate_json_data(data_string)
   build_data(data_map)
 end
 
-def save_data_json(date, target_min, data_json)
+def save_data_json(target_min, data_json)
   parent_path = File.join(@http_conf['document_path'], target_min)
   Dir.mkdir(parent_path) unless File.exists?(parent_path)
 
@@ -49,20 +51,20 @@ def save_data_json(date, target_min, data_json)
   open( data_file_path , 'w' ){|f| f.write(data_json)}
 
   view = {}
-  view['date'] = date.strftime("%Y年%m月%d日 %H時%M分")
+  view['date'] = Time.now.strftime("%Y%m%d %H:%m")
   view_data = JSON.dump(view)
 
   open( view_file_path , 'w' ){|f| f.write(view_data)}
 
 end
 
-def save_log(date, target_min, data_string)
+def save_log(target_min, data_string)
   #その日のファイルがなかったら作成
   # every3min_20150606.log
-  filename = 'every' + target_min + "min" + Time.now.strftime("%Y%m%d%h%M") + ".log"
+  filename = 'every' + target_min + "min" + Time.now.strftime("%Y%m%d%h%m") + ".log"
   file_path = File.join(@log_path, filename)
   #そのファイルにアペンド
-  open( file_path , 'a' ){|f| f.puts(  date.strftime("%Y%m%d%H%m") + "," + data_string)}
+  open( file_path , 'a' ){|f| f.puts(data_string)}
 end
 
 
@@ -70,45 +72,16 @@ File.open './config/application.json' do |file|
   conf = JSON.load(file.read)
   @http_conf = conf["HTTP_Server"]
   @log_path = conf["log_path"]
-  @kafka_conf = conf["Kafka"]
 end
-out_path = File.join(@http_conf['document_path'], @target_min)
+
+out_path = File.join(@http_conf['document_path'], target_min)
+
+
 Dir.mkdir(out_path) unless File.exists?(out_path)
 
+save_log(target_min, input_data)
+data_json = generate_json_data(input_data)
 
+#puts data_json
 
-# http://kafka.apache.org/07/configuration.html
-# https://spark.apache.org/docs/1.3.0/streaming-kafka-integration.html
-# OSX: home brew
-#      cat /usr/local/etc/kafka/consumer.properties
-#      group.id=test-consumer-group
-
-consumer = Poseidon::PartitionConsumer.new(@kafka_conf['group_id'], @kafka_conf['hostname'], @kafka_conf['port'],
-                                           topic, 0, :latest_offset)
-
-loop do
-  messages = consumer.fetch
-  messages.each do |m|
-
-    date = DateTime.now
-    puts date.to_s
-
-    puts m.value
-    input_data = m.value
-
-    begin
-     save_log(date, @target_min, input_data)
-    rescue => ex
-     puts ex.to_s
-    end
-
-    begin
-      save_data_json(date, @target_min, generate_json_data(input_data.force_encoding('utf-8')))
-    rescue => ex
-      puts ex.to_s
-    end
-
-  end
-end
-
-
+save_data_json(target_min, data_json)

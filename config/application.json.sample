@@ -11,7 +11,9 @@
     "access_token_secret" : ""
   },
   "Kafka" : {
-
+    "group_id" : "test-consumer-group",
+    "hostname" : "localhost",
+    "port" : "9092"
   },
   "HTTP_Server" : {
     "document_path" : ""
