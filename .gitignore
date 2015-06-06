@@ -16,3 +16,5 @@ mkmf.log
 /private/
 config/application.json
 /log/*.log
+/image/*
+!.gitkeep

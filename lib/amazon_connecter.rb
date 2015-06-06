@@ -44,16 +44,6 @@ class AmazonConnecter
     end
   end
 
-
-  # Kafkaから受信するタイトルリストは４つの想定
-  # API 4 CALL
-  title_list = ['ラブライブ', 'ニセコイ', '俺ガイル', 'アルスラーン戦記']
-  title_list.each do |title|
-    puts title
-    AmazonConnecter.new.search(title)
-  end
-
-
   # http://www.amazon.co.jp/dp/4839947591/?tag=XXXXXX-22
 
 end

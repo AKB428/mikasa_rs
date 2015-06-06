@@ -4,3 +4,4 @@ gem "poseidon"
 gem "twitter"
 gem "pry"
 gem 'amazon-ecs'
+gem 'faraday'

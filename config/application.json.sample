@@ -18,5 +18,6 @@
   "HTTP_Server" : {
     "document_path" : ""
   },
-  "log_path" : "./log"
+  "log_path" : "./log",
+  "product_image_path" : "./image"
 }
