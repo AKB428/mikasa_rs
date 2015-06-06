@@ -14,7 +14,7 @@
 
 ## プログラム起動
 
-``bundle exec ruby mikasa_view.rb [Kafka TPIC] [every_minute]``
+``bundle exec ruby mikasa_view.rb [Kafka TOPIC] [every_minute]``
 
 every_minuteはディレクト名、ファイル名などの識別子に使用
 
