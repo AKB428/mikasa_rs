@@ -12,5 +12,9 @@
   },
   "Kafka" : {
 
-  }
+  },
+  "HTTP_Server" : {
+    "document_path" : ""
+  },
+  "log_path" : "./log"
 }
