@@ -6,8 +6,6 @@ class TwitterConnecter
 #ref https://github.com/sferik/twitter/blob/master/examples/Configuration.md
 #ref http://qiita.com/innocent_zero/items/8c5f4c95881dd6b416f8
 
-  @tweet_sleep_time = 10
-
   def initialize
     File.open './config/application.json' do |file|
       conf = JSON.load(file.read)
@@ -26,7 +24,7 @@ class TwitterConnecter
   def tweet_list(msg_list)
     msg_list.each do |msg|
       @tw.update(msg)
-      sleep @tweet_sleep_time
+      sleep 10
     end
   end
 
@@ -42,9 +40,10 @@ class TwitterConnecter
         end
       rescue => ex
         puts ex.to_s
+        puts ex.backtrace.join("\n")
       end
 
-      sleep @tweet_sleep_time
+      sleep 10
     end
 
   end

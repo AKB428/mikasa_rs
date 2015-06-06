@@ -30,7 +30,7 @@ def search_and_tweet_trend_production(title_list)
         }
         tweet_map_list.push(tweet)
       end
-      p tweet_map_list
+      #p tweet_map_list
 
       @twitter_connecter.tweet_list_with_media(tweet_map_list)
 
