@@ -50,7 +50,8 @@ def save_data_json(date, target_min, data_json)
 
   view = {}
   view['date'] = date.strftime("%Y年%m月%d日 %H時%M分")
-  view_data = JSON.dump(view)
+  view['date'] = target_min
+      view_data = JSON.dump(view)
 
   open( view_file_path , 'w' ){|f| f.write(view_data)}
 

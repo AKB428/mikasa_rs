@@ -16,6 +16,12 @@
 
 ``bundle exec ruby mikasa_view.rb [Kafka TOPIC] [every_minute]``
 
-every_minuteはディレクト名、ファイル名などの識別子に使用
+every_minuteはディレクトリ名、ファイル名などの識別子に使用
 
-``bundle exec ruby mikasa_view.rb ikazuchi0.view 3``
+直近5分の集計を毎分受信
+
+``bundle exec ruby mikasa_view.rb ikazuchi0.view 5``
+
+直近60分の集計を毎分受信
+
+``bundle exec ruby mikasa_view.rb ikazuchi0 60``
