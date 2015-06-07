@@ -45,3 +45,34 @@ Crontabで１時間に１度起動する想定（1時間に40ツイート）
 ``bundle exec ruby mikasa.rb [Kafka TOPIC]``
 
 ``bundle exec ruby mikasa.rb [ikazuchi0]``
+
+#### wheneverを使ってcronに設定する
+
+```
+./setup.sh
+```
+
+```
+vi ./config/schedule.rb
+```
+
+もしくはコピーして編集する
+
+```
+mkdir private
+cp /config/schedule.rb private/schedule_hogehoge.rb
+```
+
+cronに登録
+
+```
+whenever -f private/schedule_hogehoge.rb
+```
+
+上記で出力された設定をcrontabにコピーする
+
+crontabを全上書きしたい場合は以下
+
+```
+whenever -w -f private/schedule.rb
+```
