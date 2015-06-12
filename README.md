@@ -10,7 +10,7 @@
 * Kafka起動
 * mikasa_olを起動
 * HTTP Serverを起動
-* cp config/applocation.json.sample config/applocation.jsonを実行し設定を記述
+* cp config/application.json.sample config/application.jsonを実行し設定を記述
 
 ## プログラム起動
 

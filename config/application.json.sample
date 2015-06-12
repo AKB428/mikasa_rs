@@ -16,7 +16,7 @@
     "port" : "9092"
   },
   "HTTP_Server" : {
-    "document_path" : ""
+    "document_path" : "/usr/share/nginx/html/"
   },
   "log_path" : "./log",
   "product_image_path" : "./image"
