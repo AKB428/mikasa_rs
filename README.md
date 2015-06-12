@@ -21,6 +21,14 @@
 
 Twitterで呟かれているトレンドタイトルをつぶやきアニメビッグデータっぽく表示する
 
+#### 準備
+
+```
+mkdir /usr/share/nginx/html/5
+mkdir /usr/share/nginx/html/60
+cp sample/* /usr/share/nginx/html/5/
+cp sample/* /usr/share/nginx/html/60/
+```
 
 ``bundle exec ruby mikasa_view.rb [Kafka TOPIC] [every_minute]``
 
