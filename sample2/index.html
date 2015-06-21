@@ -173,13 +173,13 @@
 
 
     var historyData;
-    $.getJSON("data_hist.json", function(json){
+    $.getJSON("data_hist2.json", function(json){
         historyData = json;
     });
 
     var move = function() {
         if(counter < historyData.length - 1) {
-            setTimeout(move, 500);
+            setTimeout(move, 250);
         }
         $("#drawBox").empty();
         console.log(historyData[counter]);
