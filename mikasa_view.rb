@@ -64,6 +64,38 @@ def save_log(date, target_min, data_string)
   file_path = File.join(@log_path, filename)
   #そのファイルにアペンド
   open( file_path , 'a' ){|f| f.puts(  date.strftime("%Y%m%d%H%M") + "," + data_string)}
+  return file_path
+end
+
+def save_history_json(log_filename, target_min)
+  parent_path = File.join(@http_conf['document_path'], target_min)
+  Dir.mkdir(parent_path) unless File.exists?(parent_path)
+
+  #ファイルは強制上書き
+  data_hist_path = File.join(parent_path, "data_hist.json")
+
+  lines = 0
+  data = []
+  open(log_filename) {|file|
+    while l = file.gets
+      lines += 1
+      data.push(l)
+    end
+  }
+
+  start_line = lines - 60 > 1 ? lines - 60 : 1
+  end_line = lines
+
+  output = '['
+  (start_line..end_line).each do |i|
+    output+= generate_json_data(data[i - 1]) + ','
+  end
+
+  output.gsub!(/,$/,'')
+  output += ']'
+
+  open( data_hist_path , 'w' ){|f| f.write(output)}
+
 end
 
 
@@ -98,7 +130,8 @@ loop do
     input_data = m.value
 
     begin
-     save_log(date, @target_min, input_data)
+     log_filename = save_log(date, @target_min, input_data)
+     save_history_json(log_filename, @target_min)
     rescue => ex
      puts ex.to_s
     end

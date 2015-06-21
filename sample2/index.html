@@ -70,7 +70,7 @@
         // Returns a flattened hierarchy containing all leaf nodes under the root.
         function classes(root) {
 
-            console.log(root);
+            //console.log(root);
 
             var classes = [];
 
@@ -173,7 +173,7 @@
 
 
     var historyData;
-    $.getJSON("data_hist2.json", function(json){
+    $.getJSON("data_hist.json", function(json){
         historyData = json;
     });
 
@@ -182,10 +182,10 @@
             setTimeout(move, 250);
         }
         $("#drawBox").empty();
-        console.log(historyData[counter]);
+        //console.log(historyData[counter]);
         drawMicroBigData2(historyData[counter]);
 
-        console.log("draw" + counter + " " + new Date().toString())
+        //console.log("draw" + counter + " " + new Date().toString())
         counter++;
     };
 
