@@ -23,12 +23,24 @@ Twitterで呟かれているトレンドタイトルをつぶやきアニメビ�
 
 #### 準備
 
+WWW公開用フォルダを作る
 ```
 mkdir /usr/share/nginx/html/5
 mkdir /usr/share/nginx/html/60
+```
+
+[スタンダード版]
+```
 cp sample/* /usr/share/nginx/html/5/
 cp sample/* /usr/share/nginx/html/60/
 ```
+
+[過去の履歴をアニメーションで表示]
+```
+cp sample2/* /usr/share/nginx/html/5/
+cp sample2/* /usr/share/nginx/html/60/
+```
+
 
 ``bundle exec ruby mikasa_view.rb [Kafka TOPIC] [every_minute]``
 
