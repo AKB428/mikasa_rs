@@ -63,10 +63,6 @@ class AmazonConnecter
 
       if (!msg_limit_length.nil?)
         if (product_map['text'].length > msg_limit_length)
-          puts product_map['text'].length
-          puts title
-          puts title.slice!(0, title_max_length)
-
           product_map['text'] = build_msg(title, price, release_date, asin, @amazon_conf["associate_tag"])
         end
       end
