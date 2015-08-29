@@ -18,11 +18,14 @@ class AmazonConnecter
     }
   end
 
+  def build_msg(title, price, release_date, asin, associate_tag)
+    sprintf("%s 価格:%s 発売日:%s http://www.amazon.co.jp/dp/%s/?tag=%s", title, price, release_date, asin, associate_tag)
+  end
 
   # タイトルのリストを受け取り 10件ずつ商品のリストを返す
   # https://images-na.ssl-images-amazon.com/images/G/09/associates/paapi/dg/index.html?ItemSearch.html
   # ItemSearch は、一度に最大で10個の検索結果を返します。
-  def search(title)
+  def search(title, msg_limit_length = nil, title_max_length = 60)
     # sort param
     # https://images-na.ssl-images-amazon.com/images/G/09/associates/paapi/dg/index.html?APPNDX_SortValuesArticle.html
     # JA SORT
@@ -33,7 +36,7 @@ class AmazonConnecter
     product_map_list = []
 
     category_list = ['DVD','Books','Toys','Hobbies','Music']
-    
+
     category = category_list[rand(category_list.size)]
 
     puts "category=" + category
@@ -56,9 +59,21 @@ class AmazonConnecter
       release_date = item.get("ItemAttributes/ReleaseDate")
       image_url = item.get("LargeImage/URL")
 
-      product_map['text'] = sprintf("%s 価格:%s 発売日:%s http://www.amazon.co.jp/dp/%s/?tag=%s", title, price, release_date, asin, @amazon_conf["associate_tag"])
+      product_map['text'] = build_msg(title, price, release_date, asin, @amazon_conf["associate_tag"])
+
+      if (!msg_limit_length.nil?)
+        if (product_map['text'].length > msg_limit_length)
+          puts product_map['text'].length
+          puts title
+          puts title.slice!(0, title_max_length)
+
+          product_map['text'] = build_msg(title, price, release_date, asin, @amazon_conf["associate_tag"])
+        end
+      end
+
       product_map['image_url'] = image_url
       product_map_list.push(product_map)
+
     end
 
     product_map_list
