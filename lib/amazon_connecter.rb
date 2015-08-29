@@ -32,7 +32,13 @@ class AmazonConnecter
 
     product_map_list = []
 
-    res = Amazon::Ecs.item_search(title, :item_page => 1, :country => "jp", :sort => 'salesrank', :search_index => 'DVD', :response_group => 'Medium')
+    category_list = ['DVD','Books','Toys','Hobbies','Music']
+    
+    category = category_list[rand(category_list.size)]
+
+    puts "category=" + category
+
+    res = Amazon::Ecs.item_search(title, :item_page => 1, :country => "jp", :sort => 'salesrank', :search_index => category, :response_group => 'Medium')
     # 返ってきたXMLを表示（res.doc.to_sでも多分OK）
 
     # レスポンス要素
