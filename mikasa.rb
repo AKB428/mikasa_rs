@@ -19,7 +19,7 @@ end
 def search_and_tweet_trend_production(title_list)
   title_list.each do |title|
     begin
-      product_map_list = @amazon_connecter.search(title)
+      product_map_list = @amazon_connecter.search(title, 140)
       #p product_map_list
 
       tweet_map_list = []
