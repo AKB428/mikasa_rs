@@ -19,6 +19,7 @@
 <script>
 
     var __interval;
+    var PAUSE = false;
 
     drawMicroBigData("data.json");
     function drawMicroBigData(jsonFilename) {
@@ -221,6 +222,7 @@
     });
 
     var move = function() {
+        if(PAUSE) {return;}
         if(counter < historyData.length - 1) {
             setTimeout(move, 250);
         }
@@ -233,6 +235,7 @@
     };
 
     var moveDay = function() {
+        if(PAUSE) {return;}
         if(counter < historyDateDay4Animation.length - 1) {
             setTimeout(moveDay, 250);
         }
@@ -280,6 +283,8 @@
 
     // aで5分のページに遷移
     // bで60分のページに遷移
+
+    // pでアニメーションのストップ
 
 
     // 各種ブラウザのキーコード
@@ -351,6 +356,18 @@
 
                 drawMicroBigData2(targetHistoryData[moveControlCounter]);
             });
+        }
+
+        // pボタン
+        if (80 == e.keyCode) {
+
+            if (!PAUSE) {
+                console.log("PAUSE");
+                PAUSE = true;
+            } else {
+                console.log("PAUSE BREAK");
+                PAUSE = false;
+            }
         }
     });
 
