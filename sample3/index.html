@@ -95,11 +95,22 @@
 
 <script>
     var counter = 0;
+    var historyDateDay4Animation;
 
     $(function(){
         $("#recentMove").click(function () {
             counter = 0;
             move();
+        })
+    });
+
+    $(function(){
+        $("#dayMove").click(function () {
+            $.getJSON("data_hist_day.json", function(json){
+                counter = 0;
+                historyDateDay4Animation = json;
+                moveDay();
+            });
         })
     });
 
@@ -189,7 +200,6 @@
 
 
     var historyData;
-    var historyDateDay;
     var targetHistoryData;
     var moveControlCounter;
 
@@ -209,6 +219,15 @@
         drawMicroBigData2(historyData[counter]);
 
         //console.log("draw" + counter + " " + new Date().toString())
+        counter++;
+    };
+
+    var moveDay = function() {
+        if(counter < historyDateDay4Animation.length - 1) {
+            setTimeout(moveDay, 250);
+        }
+        $("#drawBox").empty();
+        drawMicroBigData2(historyDateDay4Animation[counter]);
         counter++;
     };
 
@@ -283,6 +302,7 @@
 
 <div>
     <button id="recentMove">直近1時間の動き</button>
+    <button id="dayMove">今日1日の動き</button>
 </div>
 <div id="text" style="font-size: 26px"></div>
 
