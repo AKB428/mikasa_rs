@@ -235,10 +235,17 @@
 
     // ←で１インターバル[1分]巻き戻し
     // →で1 インターバル[1分]先に進む
+
+    // ↑で60インターバル [60分] 進む ※LボタンでDayHstをロードしておかないと意味がない
+    // ↓で60インターバル [60分] 過去に戻る ※LボタンでDayHstをロードしておかないと意味がない
+
+    // lで1日の履歴のロード（2MぐらいのJSONなので初期ロードはしない）
+
     // rでリロード
+
     // aで5分のページに遷移
     // bで60分のページに遷移
-    // lで1日の履歴のロード（2MぐらいのJSONなので初期ロードはしない）
+
 
     // 各種ブラウザのキーコード
     // http://www.programming-magic.com/file/20080205232140/keycode_table.html
@@ -246,22 +253,37 @@
 
         // ←
         if(37 == e.keyCode) {
-            console.log("Back history interval (1 Hour Hist)")
+            console.log("Back history 1-interval")
             moveControlCounter -= 1;
             moveControlCounter = moveControlCounter > 0 ? moveControlCounter : 0;
             $("#drawBox").empty();
-
-
             drawMicroBigData2(targetHistoryData[moveControlCounter]);
         }
         // →
         if(39 == e.keyCode) {
-            console.log("Next history interval (1 Hour Hist)");
+            console.log("Next history 1-interval");
             moveControlCounter+= 1;
             moveControlCounter = targetHistoryData.length - 1 >= moveControlCounter ? moveControlCounter : targetHistoryData.length - 1;
             $("#drawBox").empty();
+            drawMicroBigData2(targetHistoryData[moveControlCounter]);
+        }
 
 
+        // ↓
+        if(40 == e.keyCode) {
+            console.log("Back history 60-interval")
+            moveControlCounter -= 60;
+            moveControlCounter = moveControlCounter > 0 ? moveControlCounter : 0;
+            $("#drawBox").empty();
+            drawMicroBigData2(targetHistoryData[moveControlCounter]);
+        }
+
+        // ↑
+        if(38 == e.keyCode) {
+            console.log("Next history 60-interval");
+            moveControlCounter+= 60;
+            moveControlCounter = targetHistoryData.length - 1 >= moveControlCounter ? moveControlCounter : targetHistoryData.length - 1;
+            $("#drawBox").empty();
             drawMicroBigData2(targetHistoryData[moveControlCounter]);
         }
 
