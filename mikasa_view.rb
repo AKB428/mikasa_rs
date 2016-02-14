@@ -98,6 +98,37 @@ def save_history_json(log_filename, target_min)
 
 end
 
+# 元々1時間にJSONログを切っていたがこのメソッドではその日のログは全部JSON化する
+def save_day_history_json(log_filename, target_min)
+  parent_path = File.join(@http_conf['document_path'], target_min)
+
+  #ファイルは強制上書き
+  data_hist_path = File.join(parent_path, 'data_hist_day.json')
+
+  lines = 0
+  data = []
+  open(log_filename) {|file|
+    while l = file.gets
+      lines += 1
+      data.push(l)
+    end
+  }
+
+  start_line = 1
+  end_line = lines
+
+  output = '['
+  (start_line..end_line).each do |i|
+    output+= generate_json_data(data[i - 1]) + ','
+  end
+
+  output.gsub!(/,$/,'')
+  output += ']'
+
+  open( data_hist_path , 'w' ){|f| f.write(output)}
+
+end
+
 
 File.open './config/application.json' do |file|
   conf = JSON.load(file.read)
@@ -132,6 +163,7 @@ loop do
     begin
      log_filename = save_log(date, @target_min, input_data)
      save_history_json(log_filename, @target_min)
+     save_day_history_json(log_filename, @target_min)
     rescue => ex
      puts ex.to_s
     end
