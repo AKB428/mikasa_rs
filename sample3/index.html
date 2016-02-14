@@ -105,6 +105,22 @@
 
     function drawMicroBigData2(data) {
 
+
+        console.log(data.children[0].name);
+        var hist_datetime = function () {
+            var datetime = data.children[0].name;
+            var year = datetime.substr(0,4);
+            var month = datetime.substr(4,2);
+            var day = datetime.substr(6,2);
+            var hour = datetime.substr(8,2);
+            var minute = datetime.substr(10,2);
+            return year + "年" + month + "月" + day + "日" + hour + "時" + minute + "分";
+        }();
+
+        console.log(hist_datetime);
+        $("#text").text(hist_datetime);
+
+
         // Returns a flattened hierarchy containing all leaf nodes under the root.
         function classes(root) {
             var classes = [];
