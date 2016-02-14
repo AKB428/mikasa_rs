@@ -109,11 +109,17 @@
 
     $(function(){
         $("#dayMove").click(function () {
-            $.getJSON("data_hist_day.json", function(json){
-                counter = 0;
-                historyDateDay4Animation = json;
+
+            // 入力フォームですでに過去のを取得しているならロードしない、ここは今日の履歴をロードする場所
+            if (historyDateDay4Animation == null) {
+                $.getJSON("data_hist_day.json", function (json) {
+                    counter = 0;
+                    historyDateDay4Animation = json;
+                    moveDay();
+                });
+            } else {
                 moveDay();
-            });
+            }
         })
     });
 
@@ -252,6 +258,7 @@
             $.getJSON(targetJsonFileName, function(json){
                 console.log(json.length);
                 targetHistoryData = json;
+                historyDateDay4Animation = json;
                 moveControlCounter = 0;
                 $("#drawBox").empty();
 
@@ -352,7 +359,7 @@
 
 <div>
     <button id="recentMove">直近1時間の動き</button>
-    <button id="dayMove">今日1日の動き</button>
+    <button id="dayMove">1日の動き</button>
 </div>
 <div id="text" style="font-size: 26px"></div>
 <div>
