@@ -189,12 +189,16 @@
 
 
     var historyData;
+    var historyDateDay;
+    var targetHistoryData;
     var moveControlCounter;
+
     $.getJSON("data_hist.json", function(json){
         historyData = json;
-
+        targetHistoryData = historyData;
         moveControlCounter = historyData.length - 1;
     });
+
 
     var move = function() {
         if(counter < historyData.length - 1) {
@@ -213,6 +217,9 @@
     // ←で１インターバル[1分]巻き戻し
     // →で1 インターバル[1分]先に進む
     // rでリロード
+    // aで5分のページに遷移
+    // bで60分のページに遷移
+    // lで1日の履歴のロード（2MぐらいのJSONなので初期ロードはしない）
 
     // 各種ブラウザのキーコード
     // http://www.programming-magic.com/file/20080205232140/keycode_table.html
@@ -224,15 +231,19 @@
             moveControlCounter -= 1;
             moveControlCounter = moveControlCounter > 0 ? moveControlCounter : 0;
             $("#drawBox").empty();
-            drawMicroBigData2(historyData[moveControlCounter]);
+
+
+            drawMicroBigData2(targetHistoryData[moveControlCounter]);
         }
         // →
         if(39 == e.keyCode) {
             console.log("Next history interval (1 Hour Hist)");
             moveControlCounter+= 1;
-            moveControlCounter = historyData.length - 1 >= moveControlCounter ? moveControlCounter : historyData.length - 1;
+            moveControlCounter = targetHistoryData.length - 1 >= moveControlCounter ? moveControlCounter : targetHistoryData.length - 1;
             $("#drawBox").empty();
-            drawMicroBigData2(historyData[moveControlCounter]);
+
+
+            drawMicroBigData2(targetHistoryData[moveControlCounter]);
         }
 
         // rボタン
@@ -253,13 +264,25 @@
             console.log("Jump Page 60Minute");
             location.href = "//" + window.location.hostname + "/60/index.html";
         }
+
+        // lボタン
+        if (76 == e.keyCode) {
+            console.log("load Day History");
+            $.getJSON("data_hist_day.json", function(json){
+                targetHistoryData = json;
+                moveControlCounter = 0;
+                $("#drawBox").empty();
+
+                drawMicroBigData2(targetHistoryData[moveControlCounter]);
+            });
+        }
     });
 
 
 </script>
 
 <div>
-    <button id="recentMove">直近の動き</button>
+    <button id="recentMove">直近1時間の動き</button>
 </div>
 <div id="text" style="font-size: 26px"></div>
 
