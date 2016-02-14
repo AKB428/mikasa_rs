@@ -210,10 +210,12 @@
 
 //------------------------------ Controller
 
-    // ←で１インターバル巻き戻し
-    // →で1インターバル先に進む
+    // ←で１インターバル[1分]巻き戻し
+    // →で1 インターバル[1分]先に進む
+    // rでリロード
 
-
+    // 各種ブラウザのキーコード
+    // http://www.programming-magic.com/file/20080205232140/keycode_table.html
     $(window).keyup(function(e){
 
         // ←
@@ -231,6 +233,25 @@
             moveControlCounter = historyData.length - 1 >= moveControlCounter ? moveControlCounter : historyData.length - 1;
             $("#drawBox").empty();
             drawMicroBigData2(historyData[moveControlCounter]);
+        }
+
+        // rボタン
+        if(82 == e.keyCode) {
+            console.log("Reload Page");
+            location.reload(true);
+        }
+
+        // aボタン
+        if(65 == e.keyCode) {
+            console.log("Jump Page 5Minute");
+
+            location.href = "//" + window.location.hostname + "/5/index.html";
+        }
+
+        // bボタン
+        if(66 == e.keyCode) {
+            console.log("Jump Page 60Minute");
+            location.href = "//" + window.location.hostname + "/60/index.html";
         }
     });
 
