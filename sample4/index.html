@@ -98,12 +98,15 @@
 </script>
 
 <script>
-    var counter = 0;
+    var moveControlCounter = 0;
     var historyDateDay4Animation;
+
+    var historyData;
+    var targetHistoryData;
 
     $(function(){
         $("#recentMove").click(function () {
-            counter = 0;
+            moveControlCounter= 0;
             move();
         })
     });
@@ -114,8 +117,9 @@
             // 入力フォームですでに過去のを取得しているならロードしない、ここは今日の履歴をロードする場所
             if (historyDateDay4Animation == null) {
                 $.getJSON("data_hist_day.json", function (json) {
-                    counter = 0;
+                    moveControlCounter = 0;
                     historyDateDay4Animation = json;
+                    targetHistoryData = json;
                     moveDay();
                 });
             } else {
@@ -211,9 +215,6 @@
     }
 
 
-    var historyData;
-    var targetHistoryData;
-    var moveControlCounter;
 
     $.getJSON("data_hist.json", function(json){
         historyData = json;
@@ -223,25 +224,23 @@
 
     var move = function() {
         if(PAUSE) {return;}
-        if(counter < historyData.length - 1) {
+        if(moveControlCounter < historyData.length - 1) {
             setTimeout(move, 250);
         }
         $("#drawBox").empty();
-        //console.log(historyData[counter]);
-        drawMicroBigData2(historyData[counter]);
+        drawMicroBigData2(historyData[moveControlCounter]);
 
-        //console.log("draw" + counter + " " + new Date().toString())
-        counter++;
+        moveControlCounter++;
     };
 
     var moveDay = function() {
         if(PAUSE) {return;}
-        if(counter < historyDateDay4Animation.length - 1) {
+        if(moveControlCounter < historyDateDay4Animation.length - 1) {
             setTimeout(moveDay, 250);
         }
         $("#drawBox").empty();
-        drawMicroBigData2(historyDateDay4Animation[counter]);
-        counter++;
+        drawMicroBigData2(historyDateDay4Animation[moveControlCounter]);
+        moveControlCounter++;
     };
 
     $(function(){
@@ -364,7 +363,9 @@
             if (!PAUSE) {
                 console.log("PAUSE");
                 PAUSE = true;
+                moveControlCounter--;
             } else {
+                // TODO いまは再開できない move関数を再度実行する(move or moveDay)
                 console.log("PAUSE BREAK");
                 PAUSE = false;
             }
