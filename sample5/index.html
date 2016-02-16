@@ -1,0 +1,404 @@
+<!DOCTYPE html>
+<meta charset="utf-8">
+<head>
+    <title>マイクロ つぶやきビッグデータKAI</title>
+</head>
+<style>
+
+    body {
+        font: 30px sans-serif;
+        background-color: #FCF3F3;
+        color: #1F1D1D;
+    }
+
+    text {
+        font: 30px sans-serif;
+    }
+
+
+
+</style>
+<body>
+
+<div id="drawBox" align="center"></div>
+
+<script src="http://ajax.googleapis.com/ajax/libs/jquery/2.1.4/jquery.min.js"></script>
+<script src="http://d3js.org/d3.v3.min.js"></script>
+<script>
+
+    var __interval;
+    var PAUSE = false;
+
+    drawMicroBigData("data.json");
+    function drawMicroBigData(jsonFilename) {
+        var diameter = 960,
+                format = d3.format(",d"),
+                color = d3.scale.category20c();
+
+        var bubble = d3.layout.pack()
+                .sort(null)
+                .size([diameter, diameter])
+                .padding(1.5);
+
+        var svg = d3.select("#drawBox").append("svg")
+                .attr("width", diameter)
+                .attr("height", diameter)
+                .attr("class", "bubble");
+
+        d3.json(jsonFilename, function (error, root) {
+            var node = svg.selectAll(".node")
+                    .data(bubble.nodes(classes(root))
+                            .filter(function (d) {
+                                return !d.children;
+                            }))
+                    .enter().append("g")
+                    .attr("class", "node")
+                    .attr("transform", function (d) {
+                        return "translate(" + d.x + "," + d.y + ")";
+                    });
+
+            node.append("title")
+                    .text(function (d) {
+                        return d.className + ": " + format(d.value);
+                    });
+
+            node.append("circle")
+                    .attr("r", function (d) {
+                        return d.r;
+                    })
+                    .style("fill", function (d) {
+                        return color(d.packageName);
+                    });
+
+            node.append("text")
+                    .attr("dy", ".3em")
+                    .style("text-anchor", "middle")
+                    .attr("fill", "1F1D1D")
+                    .text(function (d) {
+                        return d.className.substring(0, d.r / 3);
+                    });
+        });
+
+        // Returns a flattened hierarchy containing all leaf nodes under the root.
+        function classes(root) {
+
+            //console.log(root);
+
+            var classes = [];
+
+            function recurse(name, node) {
+                if (node.children) node.children.forEach(function(child) { recurse(node.name, child); });
+                else classes.push({packageName: name, className: node.name, value: node.size});//node.size
+            }
+
+            recurse(null, root);
+            return {children: classes};
+        }
+
+        d3.select(self.frameElement).style("height", diameter + "px");
+
+    }
+
+
+    d3.json("view.json", function(data){
+        document.getElementById("text").innerHTML="直近" + data.every + "分の発言数の大きさ。 更新日時 " + data.date + "(1分に一度更新)";
+        __interval = data.every;
+    });
+</script>
+
+<script>
+    var moveControlCounter = 0;
+    var historyDateDay4Animation;
+
+    var historyData;
+    var targetHistoryData;
+
+    $(function(){
+        $("#recentMove").click(function () {
+            moveControlCounter= 0;
+            move();
+        })
+    });
+
+    $(function(){
+        $("#dayMove").click(function () {
+               $("#controller").hide();
+            // 入力フォームですでに過去のを取得しているならロードしない、ここは今日の履歴をロードする場所
+            if (historyDateDay4Animation == null) {
+                $.getJSON("data_hist_day.json", function (json) {
+                    moveControlCounter = 0;
+                    historyDateDay4Animation = json;
+                    targetHistoryData = json;
+                    moveDay();
+                });
+            } else {
+                moveDay();
+            }
+        })
+    });
+
+
+
+    function drawMicroBigData2(data) {
+
+
+        console.log(data.children[0].name);
+        var hist_datetime = function () {
+            var datetime = data.children[0].name;
+            var year = datetime.substr(0,4);
+            var month = datetime.substr(4,2);
+            var day = datetime.substr(6,2);
+            var hour = datetime.substr(8,2);
+            var minute = datetime.substr(10,2);
+            return year + "年" + month + "月" + day + "日" + hour + "時" + minute + "分";
+        }();
+
+        console.log(hist_datetime);
+        $("#text").text(hist_datetime);
+
+
+        // Returns a flattened hierarchy containing all leaf nodes under the root.
+        function classes(root) {
+            var classes = [];
+
+            function recurse(name, node) {
+                if (node.children) node.children.forEach(function(child) { recurse(node.name, child); });
+                else classes.push({packageName: name, className: node.name, value: node.size});//node.size
+            }
+
+            recurse(null, root);
+            return {children: classes};
+        }
+
+        var diameter = 960,
+                format = d3.format(",d"),
+                color = d3.scale.category20();
+
+        var bubble = d3.layout.pack()
+                .sort(null)
+                .size([diameter, diameter])
+                .padding(1.5);
+
+        var svg = d3.select("#drawBox").append("svg")
+                .attr("width", diameter)
+                .attr("height", diameter)
+                .attr("class", "bubble");
+
+
+        var node = svg.selectAll(".node")
+                .data(bubble.nodes(classes(data))
+                        .filter(function (d) {
+                            return !d.children;
+                        }))
+                .enter().append("g")
+                .attr("class", "node")
+                .attr("transform", function (d) {
+                    return "translate(" + d.x + "," + d.y + ")";
+                });
+
+        node.append("title")
+                .text(function (d) {
+                    return d.className + ": " + format(d.value);
+                });
+
+        node.append("circle")
+                .attr("r", function (d) {
+                    return d.r;
+                })
+                .style("fill", function (d) {
+                    return color(d.packageName);
+                });
+
+        node.append("text")
+                .attr("dy", ".3em")
+                .style("text-anchor", "middle")
+                .attr("fill", "1F1D1D")
+                .text(function (d) {
+                    return d.className.substring(0, d.r / 3);
+                });
+
+
+
+
+        d3.select(self.frameElement).style("height", diameter + "px");
+
+    }
+
+
+
+    $.getJSON("data_hist.json", function(json){
+        historyData = json;
+        targetHistoryData = historyData;
+        moveControlCounter = historyData.length - 1;
+    });
+
+    var move = function() {
+        if(PAUSE) {return;}
+        if(moveControlCounter < historyData.length - 1) {
+            setTimeout(move, 250);
+        }
+        $("#drawBox").empty();
+        drawMicroBigData2(historyData[moveControlCounter]);
+
+        moveControlCounter++;
+    };
+
+    var moveDay = function() {
+        if(PAUSE) {return;}
+        if(moveControlCounter < historyDateDay4Animation.length - 1) {
+            setTimeout(moveDay, 250);
+        }
+        $("#drawBox").empty();
+        drawMicroBigData2(historyDateDay4Animation[moveControlCounter]);
+        moveControlCounter++;
+    };
+
+    $(function(){
+        $("#submit_input_date").click(function () {
+
+            var year = $('[name=year]').val();
+            var month = $('[name=month]').val();
+            var day = $('[name=day]').val();
+
+            month = ("0"+month).slice(-2);
+            day = ("0"+day).slice(-2);
+
+            //every5min20151231.json
+            var targetJsonFileName = "./log/every" + __interval + "min" + year + month + day + ".json";
+            console.log(targetJsonFileName);
+
+            $.getJSON(targetJsonFileName, function(json){
+                console.log(json.length);
+                targetHistoryData = json;
+                historyDateDay4Animation = json;
+                moveControlCounter = 0;
+                $("#drawBox").empty();
+
+                drawMicroBigData2(targetHistoryData[moveControlCounter]);
+            });
+        })
+    });
+//------------------------------ Controller
+
+    // ←で１インターバル[1分]巻き戻し
+    // →で1 インターバル[1分]先に進む
+
+    // ↑で60インターバル [60分] 進む ※LボタンでDayHstをロードしておかないと意味がない
+    // ↓で60インターバル [60分] 過去に戻る ※LボタンでDayHstをロードしておかないと意味がない
+
+    // lで1日の履歴のロード（2MぐらいのJSONなので初期ロードはしない）
+
+    // rでリロード
+
+    // aで5分のページに遷移
+    // bで60分のページに遷移
+
+    // pでアニメーションのストップ
+
+
+    // 各種ブラウザのキーコード
+    // http://www.programming-magic.com/file/20080205232140/keycode_table.html
+    $(window).keyup(function(e){
+
+        // ←
+        if(37 == e.keyCode) {
+            console.log("Back history 1-interval")
+            moveControlCounter -= 1;
+            moveControlCounter = moveControlCounter > 0 ? moveControlCounter : 0;
+            $("#drawBox").empty();
+            drawMicroBigData2(targetHistoryData[moveControlCounter]);
+        }
+        // →
+        if(39 == e.keyCode) {
+            console.log("Next history 1-interval");
+            moveControlCounter+= 1;
+            moveControlCounter = targetHistoryData.length - 1 >= moveControlCounter ? moveControlCounter : targetHistoryData.length - 1;
+            $("#drawBox").empty();
+            drawMicroBigData2(targetHistoryData[moveControlCounter]);
+        }
+
+
+        // ↓
+        if(40 == e.keyCode) {
+            console.log("Back history 60-interval")
+            moveControlCounter -= 60;
+            moveControlCounter = moveControlCounter > 0 ? moveControlCounter : 0;
+            $("#drawBox").empty();
+            drawMicroBigData2(targetHistoryData[moveControlCounter]);
+        }
+
+        // ↑
+        if(38 == e.keyCode) {
+            console.log("Next history 60-interval");
+            moveControlCounter+= 60;
+            moveControlCounter = targetHistoryData.length - 1 >= moveControlCounter ? moveControlCounter : targetHistoryData.length - 1;
+            $("#drawBox").empty();
+            drawMicroBigData2(targetHistoryData[moveControlCounter]);
+        }
+
+        // rボタン
+        if(82 == e.keyCode) {
+            console.log("Reload Page");
+            location.reload(true);
+        }
+
+        // aボタン
+        if(65 == e.keyCode) {
+            console.log("Jump Page 5Minute");
+
+            location.href = "//" + window.location.hostname + "/5/index.html";
+        }
+
+        // bボタン
+        if(66 == e.keyCode) {
+            console.log("Jump Page 60Minute");
+            location.href = "//" + window.location.hostname + "/60/index.html";
+        }
+
+        // lボタン
+        if (76 == e.keyCode) {
+            console.log("load Day History");
+            $.getJSON("data_hist_day.json", function(json){
+                targetHistoryData = json;
+                moveControlCounter = 0;
+                $("#drawBox").empty();
+
+                drawMicroBigData2(targetHistoryData[moveControlCounter]);
+            });
+        }
+
+        // pボタン
+        if (80 == e.keyCode) {
+
+            if (!PAUSE) {
+                console.log("PAUSE");
+                PAUSE = true;
+                moveControlCounter--;
+            } else {
+                // TODO いまは再開できない move関数を再度実行する(move or moveDay)
+                console.log("PAUSE BREAK");
+                PAUSE = false;
+            }
+        }
+    });
+
+
+</script>
+
+<div id="text" style="font-size: 60px"  align="center"></div>
+<div id="controller"  align="center">
+    <div>
+        <button id="recentMove">直近1時間の動き</button>
+        <button id="dayMove">1日の動き</button>
+    </div>
+    <div>
+        <input type="number" name="year" value="2016" size="4" min="2015" max="2017"> 年
+        <input type="number" name="month" value="01" size="2" min="1" max="12"> 月
+        <input type="number" name="day" value="01" size="2" min="1" max="31"> 日
+        <button id="submit_input_date">に移動する</button>
+
+        <p>2015年9月ぐらいからのデータがあります。データがない場合は画面は変わりません。</p>
+    </div>
+</div>
+
+</body>
