@@ -112,6 +112,7 @@
 
     var historyData;
     var targetHistoryData;
+    var nextDayDemoCount = 1;
 
     $(function(){
         $("#recentMove").click(function () {
@@ -137,12 +138,29 @@
         })
     });
 
+    $(function(){
+        $("#dayMoveDemo").click(function () {
+            $("#controller").hide();
+            // 入力フォームですでに過去のを取得しているならロードしない、ここは今日の履歴をロードする場所
+            if (historyDateDay4Animation == null) {
+                $.getJSON("data_hist_day.json", function (json) {
+                    moveControlCounter = 0;
+                    historyDateDay4Animation = json;
+                    targetHistoryData = json;
+                    moveDayDemo();
+                });
+            } else {
+                moveDayDemo();
+            }
+        })
+    });
+
 
 
     function drawMicroBigData2(data) {
 
 
-        console.log(data.children[0].name);
+       // console.log(data.children[0].name);
         var hist_datetime = function () {
             var datetime = data.children[0].name;
             var year = datetime.substr(0,4);
@@ -153,7 +171,7 @@
             return year + "年" + month + "月" + day + "日" + hour + "時" + minute + "分";
         }();
 
-        console.log(hist_datetime);
+       // console.log(hist_datetime);
         $("#text").text(hist_datetime);
 
 
@@ -248,6 +266,59 @@
         if(moveControlCounter < historyDateDay4Animation.length - 1) {
             setTimeout(moveDay, 250);
         }
+        $("#drawBox").empty();
+        drawMicroBigData2(historyDateDay4Animation[moveControlCounter]);
+        moveControlCounter++;
+    };
+
+    var moveDayDemo = function() {
+        if(PAUSE) {return;}
+        if(moveControlCounter < historyDateDay4Animation.length - 1) {
+            setTimeout(moveDayDemo, 30);
+        } else if (moveControlCounter >= historyDateDay4Animation.length - 1) {
+            console.log("AAAA");
+
+            // TODO 次の日のロード
+            moveControlCounter = 0;
+
+            var year = $('[name=year]').val();
+            var month = $('[name=month]').val();
+            var day = $('[name=day]').val();
+
+            next_day = new Date(year, month - 1, day);
+
+            console.log("ND " + next_day.toDateString());
+            next_day.setDate(next_day.getDate() + nextDayDemoCount);
+            nextDayDemoCount++;
+
+            console.log("ND1 " + next_day.toDateString());
+
+            month = next_day.getMonth() + 1;
+            day = next_day.getDate();
+
+            month = ("0"+month).slice(-2);
+            day = ("0"+day).slice(-2);
+
+            //every5min20151231.json
+
+            var targetJsonFileName = "./log/every" + __interval + "min" + next_day.getFullYear() + month + day + ".json";
+            console.log(targetJsonFileName);
+
+            $.getJSON(targetJsonFileName, function(json){
+                console.log(json.length);
+                targetHistoryData = json;
+                historyDateDay4Animation = json;
+                moveControlCounter = 0;
+                $("#drawBox").empty();
+
+                console.log(historyDateDay4Animation.length);
+
+                drawMicroBigData2(targetHistoryData[moveControlCounter]);
+                setTimeout(moveDayDemo, 250);
+            });
+
+        }
+
         $("#drawBox").empty();
         drawMicroBigData2(historyDateDay4Animation[moveControlCounter]);
         moveControlCounter++;
@@ -390,6 +461,7 @@
     <div>
         <button id="recentMove">直近1時間の動き</button>
         <button id="dayMove">1日の動き</button>
+        <button id="dayMoveDemo">1日の動き(and Next Day)</button>
     </div>
     <div>
         <input type="number" name="year" value="2016" size="4" min="2015" max="2017"> 年
