@@ -28,6 +28,7 @@
 
     var __interval;
     var PAUSE = false;
+    var ANIME_MODE_TYPE = ""
 
     drawMicroBigData("data.json");
     function drawMicroBigData(jsonFilename) {
@@ -116,6 +117,7 @@
 
     $(function(){
         $("#recentMove").click(function () {
+            ANIME_MODE_TYPE = "recentMove";
             moveControlCounter= 0;
             move();
         })
@@ -123,6 +125,7 @@
 
     $(function(){
         $("#dayMove").click(function () {
+            ANIME_MODE_TYPE = "dayMove";
                $("#controller").hide();
             // 入力フォームですでに過去のを取得しているならロードしない、ここは今日の履歴をロードする場所
             if (historyDateDay4Animation == null) {
@@ -140,6 +143,7 @@
 
     $(function(){
         $("#dayMoveDemo").click(function () {
+            ANIME_MODE_TYPE = "dayMoveDemo";
             $("#controller").hide();
             // 入力フォームですでに過去のを取得しているならロードしない、ここは今日の履歴をロードする場所
             if (historyDateDay4Animation == null) {
@@ -276,7 +280,6 @@
         if(moveControlCounter < historyDateDay4Animation.length - 1) {
             setTimeout(moveDayDemo, 250);
         } else if (moveControlCounter >= historyDateDay4Animation.length - 1) {
-            console.log("AAAA");
 
             // TODO 次の日のロード
             moveControlCounter = 0;
@@ -286,12 +289,8 @@
             var day = $('[name=day]').val();
 
             next_day = new Date(year, month - 1, day);
-
-            console.log("ND " + next_day.toDateString());
             next_day.setDate(next_day.getDate() + nextDayDemoCount);
             nextDayDemoCount++;
-
-            console.log("ND1 " + next_day.toDateString());
 
             month = next_day.getMonth() + 1;
             day = next_day.getDate();
@@ -302,9 +301,10 @@
             //every5min20151231.json
 
             var targetJsonFileName = "./log/every" + __interval + "min" + next_day.getFullYear() + month + day + ".json";
-            console.log(targetJsonFileName);
 
-            $.getJSON(targetJsonFileName, function(json){
+            $.getJSON(targetJsonFileName, function() {
+                console.log("GET JSON" + targetJsonFileName);
+            }).success(function(json) {
                 console.log(json.length);
                 targetHistoryData = json;
                 historyDateDay4Animation = json;
@@ -315,6 +315,12 @@
 
                 drawMicroBigData2(targetHistoryData[moveControlCounter]);
                 setTimeout(moveDayDemo, 250);
+            }).error(function(jqXHR, textStatus, errorThrown) {
+                console.log("Ajax Error");
+                // カウンタは元に戻す
+                moveControlCounter >= historyDateDay4Animation.length - 1
+
+            }).complete(function() {
             });
 
         }
@@ -449,6 +455,14 @@
                 // TODO いまは再開できない move関数を再度実行する(move or moveDay)
                 console.log("PAUSE BREAK");
                 PAUSE = false;
+
+                if(ANIME_MODE_TYPE == "recentMove") {
+                    move();
+                } else if (ANIME_MODE_TYPE == "dayMove") {
+                    moveDay();
+                } else if (ANIME_MODE_TYPE == "dayMoveDemo") {
+                    moveDayDemo();
+                }
             }
         }
     });
